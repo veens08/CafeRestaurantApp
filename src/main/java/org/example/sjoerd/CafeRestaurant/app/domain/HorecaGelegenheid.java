@@ -4,14 +4,17 @@ public class HorecaGelegenheid {
     private String naamHG;
     private String telnrHG;
     private String emailHG;
+    private Tafel [] tafel;
 
-    public HorecaGelegenheid() {
+
+    public HorecaGelegenheid(String newNaamHG, String newTelnrHG, String newEmailHG, Tafel tafel) {
     }
 
-    public HorecaGelegenheid(String newNaamHG, String newTelnrHG, String newEmailHG) {
+    public HorecaGelegenheid(String newNaamHG, String newTelnrHG, String newEmailHG, Tafel[] newTafel) {
         setNaamHG (newNaamHG);
         setTelnrHG (newTelnrHG);
         setEmailHG (newEmailHG);
+        setTafel (newTafel);
     }
 
     public String getNaamHG() {
@@ -38,5 +41,13 @@ public class HorecaGelegenheid {
         this.emailHG = emailHG;
     }
 
+
+    public Tafel[] getTafel() {
+        return tafel;
+    }
+
+    public void setTafel(Tafel[] tafel) {
+        this.tafel = tafel;
+    }
 }
 

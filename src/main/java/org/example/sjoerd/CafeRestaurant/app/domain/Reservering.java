@@ -2,15 +2,17 @@ package org.example.sjoerd.CafeRestaurant.app.domain;
 
 public class Reservering {
     private String reserveringsDatum;
-    private String reserveringVanaf;
-    private String reserveringTot;
+    private int reserveringVanaf;
+    private int reserveringTot;
     private String naamReservering;
+    private int aantalPersonen;
 
-    public Reservering (String newReserveringsDatum, String newReserveringVanaf, String newReserveringTot, String newNaamReservering) {
+    public Reservering (String newReserveringsDatum, int newReserveringVanaf, int newReserveringTot, String newNaamReservering, int newAantalPersonen) {
         setReserveringsDatum (newReserveringsDatum);
         setReserveringVanaf (newReserveringVanaf);
         setReserveringTot (newReserveringTot);
         setNaamReservering (newNaamReservering);
+        setAantalPersonen (newAantalPersonen);
     }
 
     public String getReserveringsDatum() {
@@ -21,19 +23,19 @@ public class Reservering {
         this.reserveringsDatum = reserveringsDatum;
     }
 
-    public String getReserveringVanaf() {
+    public int getReserveringVanaf() {
         return reserveringVanaf;
     }
 
-    public void setReserveringVanaf(String reserveringVanaf) {
+    public void setReserveringVanaf(int reserveringVanaf) {
         this.reserveringVanaf = reserveringVanaf;
     }
 
-    public String getReserveringTot() {
+    public int getReserveringTot() {
         return reserveringTot;
     }
 
-    public void setReserveringTot(String reserveringTot) {
+    public void setReserveringTot(int reserveringTot) {
         this.reserveringTot = reserveringTot;
     }
 
@@ -43,5 +45,13 @@ public class Reservering {
 
     public void setNaamReservering(String naamReservering) {
         this.naamReservering = naamReservering;
+    }
+
+    public void setAantalPersonen(int aantalPersonen) {
+        this.aantalPersonen = aantalPersonen;
+    }
+
+    public int getAantalPersonen() {
+        return aantalPersonen;
     }
 }

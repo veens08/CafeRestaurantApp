@@ -8,11 +8,16 @@ public class Persoon {
     // Teller van de personen ivm. groepsgroote
     private static int aantalPersonen;
 
+    public static final String NAAM_ONBEKEND = null;
+    public static final String GEEN_TELNR = null;
+    public static final String GEEN_EMAIL_ADRES = null;
+
     public Persoon () {
-        aantalPersonen = aantalPersonen + 1;
-        setNaamPersoon (null);
-        setTelnrPersoon (null);
-        setEmailPersoon (null);
+        this(NAAM_ONBEKEND, GEEN_TELNR, GEEN_EMAIL_ADRES);
+    }
+
+    public Persoon (String newNaamPersoon, String newTelnrPersoon) {
+        this(newNaamPersoon, newTelnrPersoon, GEEN_EMAIL_ADRES);
     }
 
     public Persoon (String newNaamPersoon, String newTelnrPersoon, String newEmailPersoon) {
@@ -20,6 +25,17 @@ public class Persoon {
         setNaamPersoon (newNaamPersoon);
         setTelnrPersoon (newTelnrPersoon);
         setEmailPersoon (newEmailPersoon);
+    }
+
+    private void setStateObject (String newNaamPersoon, String newTelnrPersoon, String newEmailPersoon) {
+        aantalPersonen = aantalPersonen + 1;
+        setNaamPersoon (newNaamPersoon);
+        setTelnrPersoon (newTelnrPersoon);
+        setEmailPersoon (newEmailPersoon);
+    }
+
+    public static int getAantalPersonen() {
+        return Persoon.aantalPersonen;
     }
 
     public String getNaamPersoon() {
