@@ -76,7 +76,6 @@ public class Persoon {
                 "naamPersoon='" + naamPersoon + '\'' +
                 ", telnrPersoon='" + telnrPersoon + '\'' +
                 ", emailPersoon='" + emailPersoon + '\'' +
-                ", heeft reservering='" + heeftReservering.toString () +
                 '}';
     }
 }
