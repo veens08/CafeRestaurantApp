@@ -2,11 +2,13 @@ package org.example.sjoerd.CafeRestaurantApp;
 
 import org.example.sjoerd.CafeRestaurant.app.domain.HorecaGelegenheid;
 import org.example.sjoerd.CafeRestaurant.app.domain.Persoon;
+import org.example.sjoerd.CafeRestaurant.app.domain.Reservering;
 import org.example.sjoerd.CafeRestaurant.app.domain.Tafel;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class TestMaakCafe {
 
@@ -20,14 +22,14 @@ public class TestMaakCafe {
         // Voeg personen toe
         List<Persoon> personen = (List<Persoon>) maakTestPersonAan ();
 
-        int aantalPersonen = personen.size ();
-        System.out.println (aantalPersonen);
+        // Reservering aanmaken
+        ArrayList<Reservering> reserveringen = new ArrayList<Reservering> ();
+        maakReserveringOpConsoleAan (reserveringen);
 
-        for (int index = 0; index < aantalPersonen; index++) {
-            System.out.println (personen.get(index).toString ());
+        personen.get (0).setHeeftReservering (reserveringen.get (0));
+        personen.get (0).setNaamPersoon ("Cees");
+        System.out.println (personen.get (0).toString ());
         }
-    }
-
 
     private HorecaGelegenheid maakHorecaGelegenheid() {
         // Vul de cafe gegevens
@@ -63,4 +65,43 @@ public class TestMaakCafe {
 
         return personen;
     }
+
+    private void maakReserveringOpConsoleAan(ArrayList<Reservering> reserveringen) {
+        //Reservering gegevens ingeven via console
+        System.out.println ("Geef de reserveringsdatum (dd-mm-eejj) door : ");
+        String reserveringsDatum = vraagStringInvoer ();
+        System.out.println ("Geef de begintijd (uumm) door: ");
+        int tijdVanaf = vraagIntegerInvoer ();
+        int tijdTot = 0;
+
+        if (tijdVanaf == 1700 || tijdVanaf == 1900) {
+            tijdTot = tijdVanaf + 200;
+        } else {
+            tijdTot = tijdVanaf + 100;
+        }
+
+        System.out.println ("Geef de reserveringsnaam door : ");
+        String reserveringsNaam = vraagStringInvoer ();
+        System.out.println ("Geef het aantal personen door: ");
+        int aantalPersonen = vraagIntegerInvoer ();
+
+        reserveringen.add (new Reservering (reserveringsDatum,
+                tijdVanaf,
+                tijdTot,
+                reserveringsNaam,
+                aantalPersonen));
+    }
+
+    private String vraagStringInvoer() {
+        Scanner scanner = new Scanner (System.in);
+        String invoerString = scanner.next();
+        return invoerString;
+    }
+
+    private int vraagIntegerInvoer() {
+        Scanner scanner = new Scanner (System.in);
+        int invoerInteger = scanner.nextInt();
+        return invoerInteger;
+    }
+
 }
