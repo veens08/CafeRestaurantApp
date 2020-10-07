@@ -22,14 +22,24 @@ public class TestMaakCafe {
         // Voeg personen toe
         List<Persoon> personen = (List<Persoon>) maakTestPersonAan ();
 
-        // Reservering aanmaken
-        ArrayList<Reservering> reserveringen = new ArrayList<Reservering> ();
-        maakReserveringOpConsoleAan (reserveringen);
+        // Voeg reserveringen toe
+        List<Reservering> reserveringen = (List<Reservering>) maakTestReserveringenAan ();
+
+        int aantalReserveringen = reserveringen.size ();
+
+        // Reservering via console aanmaken
+        maakReserveringOpConsoleAan ((ArrayList<Reservering>) reserveringen);
 
         personen.get (0).setHeeftReservering (reserveringen.get (0));
         personen.get (0).setNaamPersoon ("Cees");
         System.out.println (personen.get (0).toString ());
+
+        aantalReserveringen = reserveringen.size ();
+
+        for (int index = 0; index < aantalReserveringen; index++) {
+            System.out.println (reserveringen.get (index).toString ());
         }
+    }
 
     private HorecaGelegenheid maakHorecaGelegenheid() {
         // Vul de cafe gegevens
@@ -66,6 +76,26 @@ public class TestMaakCafe {
         return personen;
     }
 
+    private List<Reservering> maakTestReserveringenAan() {
+        Reservering tafel1 = new Reservering ("11-10-2020", 1700, 1900, "Cas", 4);
+        Reservering tafel2 = new Reservering ("11-10-2020", 1700, 1900, "Jos", 4);
+        Reservering tafel3 = new Reservering ("11-10-2020", 1700, 1900, "Dre", 4);
+        Reservering tafel4 = new Reservering ("11-10-2020", 1700, 1900, "Cees", 4);
+        Reservering tafel5 = new Reservering ("11-10-2020", 1700, 1900, "Dolf", 4);
+        Reservering tafel6 = new Reservering ("11-10-2020", 1700, 1900, "Jan", 4);
+        Reservering tafel7 = new Reservering ("11-10-2020", 1700, 1900, "Jan", 4);
+        List<Reservering> reserveringen = new ArrayList<Reservering> ();
+
+        reserveringen.add(tafel1);
+        reserveringen.add(tafel2);
+        reserveringen.add(tafel3);
+        reserveringen.add(tafel4);
+        reserveringen.add(tafel5);
+        reserveringen.add(tafel6);
+        reserveringen.add(tafel7);
+
+        return reserveringen;
+    }
     private void maakReserveringOpConsoleAan(ArrayList<Reservering> reserveringen) {
         //Reservering gegevens ingeven via console
         System.out.println ("Geef de reserveringsdatum (dd-mm-eejj) door : ");
@@ -103,5 +133,4 @@ public class TestMaakCafe {
         int invoerInteger = scanner.nextInt();
         return invoerInteger;
     }
-
 }
