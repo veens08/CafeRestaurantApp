@@ -1,20 +1,26 @@
 package org.example.sjoerd.CafeRestaurant.app.domain;
 
+import java.util.Arrays;
+
 public class HorecaGelegenheid {
     private String naamHG;
     private String telnrHG;
     private String emailHG;
-    private Tafel [] tafel;
+    private Tafel [] tafels;
 
 
-    public HorecaGelegenheid(String newNaamHG, String newTelnrHG, String newEmailHG, Tafel tafel) {
+    public HorecaGelegenheid() {
+        this.naamHG = null;
+        this.telnrHG = null;
+        this.emailHG = null;
+        this.tafels = null;
     }
 
     public HorecaGelegenheid(String newNaamHG, String newTelnrHG, String newEmailHG, Tafel[] newTafel) {
         setNaamHG (newNaamHG);
         setTelnrHG (newTelnrHG);
         setEmailHG (newEmailHG);
-        setTafel (newTafel);
+        setTafels (newTafel);
     }
 
     public String getNaamHG() {
@@ -41,13 +47,23 @@ public class HorecaGelegenheid {
         this.emailHG = emailHG;
     }
 
-
-    public Tafel[] getTafel() {
-        return tafel;
+    public Tafel[] getTafels() {
+        return tafels;
     }
 
-    public void setTafel(Tafel[] tafel) {
-        this.tafel = tafel;
+    public void setTafels(Tafel[] tafels) {
+        this.tafels = tafels;
     }
+
+    @Override
+    public String toString() {
+        return "HorecaGelegenheid{" +
+                "naamHG= '" + naamHG + '\'' +
+                ", telnrHG= '" + telnrHG + '\'' +
+                ", emailHG= '" + emailHG + '\'' +
+                ", tafel= " + Arrays.toString (tafels) +
+                '}';
+    }
+
 }
 

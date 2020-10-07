@@ -4,6 +4,7 @@ public class Persoon {
     private String naamPersoon;
     private String telnrPersoon;
     private String emailPersoon;
+    private Reservering heeftReservering;
 
     // Teller van de personen ivm. groepsgroote
     private static int aantalPersonen;
@@ -11,27 +12,30 @@ public class Persoon {
     public static final String NAAM_ONBEKEND = null;
     public static final String GEEN_TELNR = null;
     public static final String GEEN_EMAIL_ADRES = null;
+    public static final Reservering GEEN_RESERVERING = null;
 
     public Persoon () {
-        this(NAAM_ONBEKEND, GEEN_TELNR, GEEN_EMAIL_ADRES);
+        this(NAAM_ONBEKEND, GEEN_TELNR, GEEN_EMAIL_ADRES, GEEN_RESERVERING);
     }
 
     public Persoon (String newNaamPersoon, String newTelnrPersoon) {
-        this(newNaamPersoon, newTelnrPersoon, GEEN_EMAIL_ADRES);
+        this(newNaamPersoon, newTelnrPersoon, GEEN_EMAIL_ADRES, GEEN_RESERVERING);
     }
 
-    public Persoon (String newNaamPersoon, String newTelnrPersoon, String newEmailPersoon) {
+    public Persoon (String newNaamPersoon, String newTelnrPersoon, String newEmailPersoon, Reservering newHeeftReservering) {
         aantalPersonen = aantalPersonen + 1;
         setNaamPersoon (newNaamPersoon);
         setTelnrPersoon (newTelnrPersoon);
         setEmailPersoon (newEmailPersoon);
+        setHeeftReservering (newHeeftReservering);
     }
 
-    private void setStateObject (String newNaamPersoon, String newTelnrPersoon, String newEmailPersoon) {
+    private void setStateObject (String newNaamPersoon, String newTelnrPersoon, String newEmailPersoon, Reservering newHeeftReservering) {
         aantalPersonen = aantalPersonen + 1;
         setNaamPersoon (newNaamPersoon);
         setTelnrPersoon (newTelnrPersoon);
         setEmailPersoon (newEmailPersoon);
+        setHeeftReservering (newHeeftReservering);
     }
 
     public static int getAantalPersonen() {
@@ -60,5 +64,19 @@ public class Persoon {
 
     public void setEmailPersoon(String emailPersoon) {
         this.emailPersoon = emailPersoon;
+    }
+
+    public void setHeeftReservering(Reservering newHeeftReservering) {
+        this.heeftReservering = newHeeftReservering;
+    }
+
+    @Override
+    public String toString() {
+        return "Persoon{" +
+                "naamPersoon='" + naamPersoon + '\'' +
+                ", telnrPersoon='" + telnrPersoon + '\'' +
+                ", emailPersoon='" + emailPersoon + '\'' +
+                ", heeft reservering='" + heeftReservering.toString () +
+                '}';
     }
 }

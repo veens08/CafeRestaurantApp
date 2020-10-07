@@ -4,11 +4,11 @@ public class Tafel {
     private int tafelNummer;
     private int tafelCapaciteit;
 
-    public static final int AANTAL_TAFELS_HG = 15;
 
-    public Tafel (){
-        setTafelNummer (0);
-        setTafelCapaciteit (0);
+
+    public Tafel() {
+        this.tafelNummer = 0;
+        this.tafelCapaciteit = 0;
     }
 
     public Tafel(int newTafelNummer, int newTafelCapaciteit) {
@@ -30,5 +30,13 @@ public class Tafel {
 
     public void setTafelCapaciteit(int tafelCapaciteit) {
         this.tafelCapaciteit = tafelCapaciteit;
+    }
+
+    @Override
+    public String toString() {
+        return "Tafel{" +
+                "tafelNummer= " + tafelNummer +
+                ", tafelCapaciteit= " + tafelCapaciteit +
+                '}';
     }
 }

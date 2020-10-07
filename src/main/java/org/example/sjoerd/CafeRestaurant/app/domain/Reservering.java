@@ -7,6 +7,14 @@ public class Reservering {
     private String naamReservering;
     private int aantalPersonen;
 
+    public Reservering () {
+        this.reserveringsDatum = null;
+        this.reserveringVanaf = 0;
+        this.reserveringTot = 0;
+        this.naamReservering = null;
+        this.aantalPersonen = 0;
+    }
+
     public Reservering (String newReserveringsDatum, int newReserveringVanaf, int newReserveringTot, String newNaamReservering, int newAantalPersonen) {
         setReserveringsDatum (newReserveringsDatum);
         setReserveringVanaf (newReserveringVanaf);
@@ -53,5 +61,16 @@ public class Reservering {
 
     public int getAantalPersonen() {
         return aantalPersonen;
+    }
+
+    @Override
+    public String toString() {
+        return "Reservering{" +
+                "reserveringsDatum='" + reserveringsDatum + '\'' +
+                ", reserveringVanaf=" + reserveringVanaf +
+                ", reserveringTot=" + reserveringTot +
+                ", naamReservering='" + naamReservering + '\'' +
+                ", aantalPersonen=" + aantalPersonen +
+                '}';
     }
 }
