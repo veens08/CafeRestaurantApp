@@ -9,47 +9,33 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class TestMaakCafe {
 
         private static final int AANTAL_TAFELS_HG = 5;
-        private static final int AANTAL_TOEGESTANE_GASTEN = 30;
+        private static final int AANTAL_TOEGESTANE_GASTEN = 15;
+        private static final String NOG_EEN_RESERVERING = "J";
 
     @Test
     void testReserveringenInEenCafe () {
-        // Vul de horeca gegevens
+
         HorecaGelegenheid cafe = maakHorecaGelegenheid ();
 
-        // Voeg personen toe
         List<Persoon> personen = (List<Persoon>) maakTestPersonAan ();
 
-        // Voeg reserveringen toe
         List<Reservering> reserveringen = (List<Reservering>) maakTestReserveringenAan ();
 
-        // Reservering via console aanmaken
-        maakReserveringOpConsoleAan ((ArrayList<Reservering>) reserveringen);
+        String volgendeReservering = NOG_EEN_RESERVERING;
+        while (volgendeReservering.equals (NOG_EEN_RESERVERING)) {
+            Reservering nieuweReservering = maakReserveringOpConsoleAan ();
 
-        // Bepaal of de reservering is toegestaan
-        boolean reserveringIsToegestaan = testTotaalAantalPersoenenVanReserveringen (reserveringen);
+            boolean reserveringIsToegestaan = testTotaalAantalPersonenVanReserveringen (reserveringen, nieuweReservering);
 
-        int aantalReserveringen = reserveringen.size ();
-        if (reserveringIsToegestaan) {
-            System.out.println ("Reservering is gemaakt");
-        } else {
-            System.out.println ("Reservering afgewezen, te veel gasten");
-            // Laatste reservering verwijderen
-            aantalReserveringen = aantalReserveringen - 1;
-            reserveringen.remove (aantalReserveringen);
-        }
-        System.out.println ("Aantal reserveringen: " + aantalReserveringen);
+            verwerkNieuweReservering (reserveringen, reserveringIsToegestaan);
 
-        for (int index = 0; index < aantalReserveringen; index++) {
-            System.out.println (reserveringen.get (index).toString ());
+            volgendeReservering = vraagOmNieuweReservering ();
         }
     }
-
-
 
     private HorecaGelegenheid maakHorecaGelegenheid() {
         // Vul de cafe gegevens
@@ -87,13 +73,13 @@ public class TestMaakCafe {
     }
 
     private List<Reservering> maakTestReserveringenAan() {
-        Reservering tafel1 = new Reservering ("11-10-2020", 1700, 1900, "Cas", 4);
-        Reservering tafel2 = new Reservering ("11-10-2020", 1700, 1900, "Jos", 4);
+        Reservering tafel1 = new Reservering ("11-10-2020", 1600, 1900, "Cas", 4);
+        Reservering tafel2 = new Reservering ("11-10-2020", 1600, 1900, "Jos", 4);
         Reservering tafel3 = new Reservering ("11-10-2020", 1700, 1900, "Dre", 4);
         Reservering tafel4 = new Reservering ("11-10-2020", 1700, 1900, "Cees", 4);
         Reservering tafel5 = new Reservering ("11-10-2020", 1700, 1900, "Dolf", 4);
-        Reservering tafel6 = new Reservering ("11-10-2020", 1700, 1900, "Jan", 4);
-        Reservering tafel7 = new Reservering ("11-10-2020", 1700, 1900, "Jan", 4);
+        Reservering tafel6 = new Reservering ("11-10-2020", 1900, 1900, "Jan", 4);
+        Reservering tafel7 = new Reservering ("11-10-2020", 1900, 1900, "Cas", 4);
         List<Reservering> reserveringen = new ArrayList<Reservering> ();
 
         reserveringen.add(tafel1);
@@ -106,7 +92,7 @@ public class TestMaakCafe {
 
         return reserveringen;
     }
-    private void maakReserveringOpConsoleAan(ArrayList<Reservering> reserveringen) {
+    private Reservering maakReserveringOpConsoleAan() {
         //Reservering gegevens ingeven via console
         System.out.println ("Geef de reserveringsdatum (dd-mm-eejj) door : ");
         String reserveringsDatum = vraagStringInvoer ();
@@ -124,12 +110,15 @@ public class TestMaakCafe {
         String reserveringsNaam = vraagStringInvoer ();
         System.out.println ("Geef het aantal personen door: ");
         int aantalPersonen = vraagIntegerInvoer ();
+        System.out.println ("Datum: " + reserveringsDatum + " Tijd: " + tijdVanaf + " Aantal personen: " + aantalPersonen);
 
-        reserveringen.add (new Reservering (reserveringsDatum,
-                tijdVanaf,
-                tijdTot,
-                reserveringsNaam,
-                aantalPersonen));
+        Reservering nieuweReservering = new Reservering
+                                        (reserveringsDatum,
+                                        tijdVanaf,
+                                        tijdTot,
+                                        reserveringsNaam,
+                                        aantalPersonen);
+        return nieuweReservering;
     }
 
     private String vraagStringInvoer() {
@@ -144,18 +133,43 @@ public class TestMaakCafe {
         return invoerInteger;
     }
 
-    private boolean testTotaalAantalPersoenenVanReserveringen(List<Reservering> reserveringen) {
+    private boolean testTotaalAantalPersonenVanReserveringen(List<Reservering> reserveringen, Reservering nieuweReservering) {
 
         boolean reserveringToegestaan = true;
-        int totaalAantalPersonen = 0;
+        int totaalAantalPersonen = nieuweReservering.getAantalPersonen ();
         int aantalReserveringen = reserveringen.size ();
         for (int index = 0; index < aantalReserveringen; index++) {
-            totaalAantalPersonen = totaalAantalPersonen + reserveringen.get (index).getAantalPersonen ();
+            if (reserveringen.get (index).getReserveringVanaf () == nieuweReservering.getReserveringVanaf ()) {
+                totaalAantalPersonen = totaalAantalPersonen + reserveringen.get (index).getAantalPersonen ();
+            }
         }
         System.out.println (totaalAantalPersonen);
         if (totaalAantalPersonen > AANTAL_TOEGESTANE_GASTEN) {
             reserveringToegestaan = false;
+        } else {
+            reserveringen.add(nieuweReservering);
         }
         return reserveringToegestaan;
+    }
+
+    private void verwerkNieuweReservering(List<Reservering> reserveringen, boolean reserveringIsToegestaan) {
+        int aantalReserveringen = reserveringen.size ();
+        if (reserveringIsToegestaan) {
+            System.out.println ("Reservering is gemaakt");
+        } else {
+            System.out.println ("Reservering afgewezen, te veel gasten");
+        }
+        System.out.println ("Aantal reserveringen: " + aantalReserveringen);
+
+        for (int index = 0; index < aantalReserveringen; index++) {
+            System.out.println (reserveringen.get (index).toString ());
+        }
+    }
+
+
+    private String vraagOmNieuweReservering() {
+        System.out.println ("Wilt u nog een reservering opvoeren (J/N): ");
+        String nieuweReservering = vraagStringInvoer ();
+        return nieuweReservering;
     }
 }
