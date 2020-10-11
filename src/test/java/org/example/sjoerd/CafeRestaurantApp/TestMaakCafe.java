@@ -9,13 +9,15 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class TestMaakCafe {
 
         private static final int AANTAL_TAFELS_HG = 5;
+        private static final int AANTAL_TOEGESTANE_GASTEN = 30;
 
     @Test
-    void testMaakCafe () {
+    void testReserveringenInEenCafe () {
         // Vul de horeca gegevens
         HorecaGelegenheid cafe = maakHorecaGelegenheid ();
 
@@ -25,21 +27,29 @@ public class TestMaakCafe {
         // Voeg reserveringen toe
         List<Reservering> reserveringen = (List<Reservering>) maakTestReserveringenAan ();
 
-        int aantalReserveringen = reserveringen.size ();
-
         // Reservering via console aanmaken
         maakReserveringOpConsoleAan ((ArrayList<Reservering>) reserveringen);
 
-        personen.get (0).setHeeftReservering (reserveringen.get (0));
-        personen.get (0).setNaamPersoon ("Cees");
-        System.out.println (personen.get (0).toString ());
+        // Bepaal of de reservering is toegestaan
+        boolean reserveringIsToegestaan = testTotaalAantalPersoenenVanReserveringen (reserveringen);
 
-        aantalReserveringen = reserveringen.size ();
+        int aantalReserveringen = reserveringen.size ();
+        if (reserveringIsToegestaan) {
+            System.out.println ("Reservering is gemaakt");
+        } else {
+            System.out.println ("Reservering afgewezen, te veel gasten");
+            // Laatste reservering verwijderen
+            aantalReserveringen = aantalReserveringen - 1;
+            reserveringen.remove (aantalReserveringen);
+        }
+        System.out.println ("Aantal reserveringen: " + aantalReserveringen);
 
         for (int index = 0; index < aantalReserveringen; index++) {
             System.out.println (reserveringen.get (index).toString ());
         }
     }
+
+
 
     private HorecaGelegenheid maakHorecaGelegenheid() {
         // Vul de cafe gegevens
@@ -132,5 +142,20 @@ public class TestMaakCafe {
         Scanner scanner = new Scanner (System.in);
         int invoerInteger = scanner.nextInt();
         return invoerInteger;
+    }
+
+    private boolean testTotaalAantalPersoenenVanReserveringen(List<Reservering> reserveringen) {
+
+        boolean reserveringToegestaan = true;
+        int totaalAantalPersonen = 0;
+        int aantalReserveringen = reserveringen.size ();
+        for (int index = 0; index < aantalReserveringen; index++) {
+            totaalAantalPersonen = totaalAantalPersonen + reserveringen.get (index).getAantalPersonen ();
+        }
+        System.out.println (totaalAantalPersonen);
+        if (totaalAantalPersonen > AANTAL_TOEGESTANE_GASTEN) {
+            reserveringToegestaan = false;
+        }
+        return reserveringToegestaan;
     }
 }
