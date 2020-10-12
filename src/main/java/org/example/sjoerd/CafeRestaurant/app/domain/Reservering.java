@@ -43,8 +43,12 @@ public class Reservering {
         return reserveringTot;
     }
 
-    public void setReserveringTot(int reserveringTot) {
-        this.reserveringTot = reserveringTot;
+    public void setReserveringTot(int newReserveringTot) {
+        if (this.reserveringVanaf == 1700 || this.reserveringVanaf == 1900) {
+            this.reserveringTot = this.reserveringVanaf + 200;
+        } else {
+            this.reserveringTot = this.reserveringVanaf + 100;
+        }
     }
 
     public String getNaamReservering() {

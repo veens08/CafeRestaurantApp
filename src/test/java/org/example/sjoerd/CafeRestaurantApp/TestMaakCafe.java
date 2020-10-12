@@ -106,12 +106,6 @@ public class TestMaakCafe {
         int tijdVanaf = numeriekeInvoerTest (tekstVeld);
         int tijdTot = 0;
 
-        if (tijdVanaf == 1700 || tijdVanaf == 1900) {
-            tijdTot = tijdVanaf + 200;
-        } else {
-            tijdTot = tijdVanaf + 100;
-        }
-
         System.out.println ("Geef de reserveringsnaam door : ");
         String reserveringsNaam = vraagStringInvoer ();
         tekstVeld = "het aantal personen";
@@ -130,31 +124,38 @@ public class TestMaakCafe {
 
     private int numeriekeInvoerTest(String tekstVeld) {
 
-        boolean numeriekeInvoer = false;
+        boolean foutInInvoer = false;
+
         int numeriekeWaarde = 0;
-        while (numeriekeInvoer == false) {
+        while (foutInInvoer == false) {
             System.out.println ("Geef " + tekstVeld + " door: ");
             String numeriekeTekst = vraagStringInvoer ();
-            numeriekeInvoer = isNumeric (numeriekeTekst);
-            if (numeriekeInvoer == true) {
+            foutInInvoer = true;
+            try {
                 numeriekeWaarde = Integer.parseInt (numeriekeTekst);
-            } else {
-                System.out.println ("Geen numerieke invoer!!!");
+            } catch (NumberFormatException nfe) {
+                System.out.println ("Geen numerieke invoer!!");
+                foutInInvoer = false;
             }
+            foutInInvoer = foutieveWaarde (tekstVeld, foutInInvoer, numeriekeWaarde);
         }
         return numeriekeWaarde;
     }
 
-    public static boolean isNumeric(String strNum) {
-        if (strNum == null) {
-            return false;
+    private boolean foutieveWaarde(String tekstVeld, boolean foutInInvoer, int numeriekeWaarde) {
+        if (foutInInvoer == true && tekstVeld.equals ("de begintijd (uumm)")) {
+            if (numeriekeWaarde != 1200 &&
+                numeriekeWaarde != 1300 &&
+                numeriekeWaarde != 1400 &&
+                numeriekeWaarde != 1500 &&
+                numeriekeWaarde != 1600 &&
+                numeriekeWaarde != 1700 &&
+                numeriekeWaarde != 1900) {
+                System.out.println ("Foutief tijdstip ingevoerd, alleen 1200, 1300, 1400, 1500, 1600, 1700 of 1900 toegestaan!!");
+                foutInInvoer = false;
+            }
         }
-        try {
-            int geheelGetal = Integer.parseInt (strNum);
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
-        return true;
+        return foutInInvoer;
     }
 
     private String vraagStringInvoer() {
