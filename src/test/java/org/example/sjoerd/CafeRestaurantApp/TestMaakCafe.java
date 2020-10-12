@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class TestMaakCafe {
 
         private static final int AANTAL_TAFELS_HG = 5;
@@ -21,10 +23,14 @@ public class TestMaakCafe {
 
         HorecaGelegenheid cafe = maakHorecaGelegenheid ();
 
-        List<Persoon> personen = (List<Persoon>) maakTestPersonAan ();
+        List<Persoon> personen = (List<Persoon>) maakTestPersonenAan ();
 
         List<Reservering> reserveringen = (List<Reservering>) maakTestReserveringenAan ();
 
+        neemEenReserveringAan (reserveringen);
+    }
+
+    private void neemEenReserveringAan(List<Reservering> reserveringen) {
         String volgendeReservering = NOG_EEN_RESERVERING;
         while (volgendeReservering.equals (NOG_EEN_RESERVERING)) {
             Reservering nieuweReservering = maakReserveringOpConsoleAan ();
@@ -53,7 +59,7 @@ public class TestMaakCafe {
         return tafels;
     }
 
-    private List<Persoon> maakTestPersonAan() {
+    private List<Persoon> maakTestPersonenAan() {
         Persoon cas = new Persoon ("Cas", "055-8445104", "Cas12@gmail.com", null);
         Persoon cees = new Persoon ("Cees", "055-8446214", "Cees99@gmail.com", null);
         Persoon jos = new Persoon ("Jos", "055-8445985", "Jos12@gmail.com", null);
@@ -93,11 +99,11 @@ public class TestMaakCafe {
         return reserveringen;
     }
     private Reservering maakReserveringOpConsoleAan() {
-        //Reservering gegevens ingeven via console
+
         System.out.println ("Geef de reserveringsdatum (dd-mm-eejj) door : ");
         String reserveringsDatum = vraagStringInvoer ();
-        System.out.println ("Geef de begintijd (uumm) door: ");
-        int tijdVanaf = vraagIntegerInvoer ();
+        String tekstVeld = "de begintijd (uumm)";
+        int tijdVanaf = numeriekeInvoerTest (tekstVeld);
         int tijdTot = 0;
 
         if (tijdVanaf == 1700 || tijdVanaf == 1900) {
@@ -108,8 +114,9 @@ public class TestMaakCafe {
 
         System.out.println ("Geef de reserveringsnaam door : ");
         String reserveringsNaam = vraagStringInvoer ();
-        System.out.println ("Geef het aantal personen door: ");
-        int aantalPersonen = vraagIntegerInvoer ();
+        tekstVeld = "het aantal personen";
+        int aantalPersonen = numeriekeInvoerTest (tekstVeld);
+
         System.out.println ("Datum: " + reserveringsDatum + " Tijd: " + tijdVanaf + " Aantal personen: " + aantalPersonen);
 
         Reservering nieuweReservering = new Reservering
@@ -121,16 +128,39 @@ public class TestMaakCafe {
         return nieuweReservering;
     }
 
+    private int numeriekeInvoerTest(String tekstVeld) {
+
+        boolean numeriekeInvoer = false;
+        int numeriekeWaarde = 0;
+        while (numeriekeInvoer == false) {
+            System.out.println ("Geef " + tekstVeld + " door: ");
+            String numeriekeTekst = vraagStringInvoer ();
+            numeriekeInvoer = isNumeric (numeriekeTekst);
+            if (numeriekeInvoer == true) {
+                numeriekeWaarde = Integer.parseInt (numeriekeTekst);
+            } else {
+                System.out.println ("Geen numerieke invoer!!!");
+            }
+        }
+        return numeriekeWaarde;
+    }
+
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            int geheelGetal = Integer.parseInt (strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+
     private String vraagStringInvoer() {
         Scanner scanner = new Scanner (System.in);
         String invoerString = scanner.next();
         return invoerString;
-    }
-
-    private int vraagIntegerInvoer() {
-        Scanner scanner = new Scanner (System.in);
-        int invoerInteger = scanner.nextInt();
-        return invoerInteger;
     }
 
     private boolean testTotaalAantalPersonenVanReserveringen(List<Reservering> reserveringen, Reservering nieuweReservering) {
@@ -139,8 +169,10 @@ public class TestMaakCafe {
         int totaalAantalPersonen = nieuweReservering.getAantalPersonen ();
         int aantalReserveringen = reserveringen.size ();
         for (int index = 0; index < aantalReserveringen; index++) {
-            if (reserveringen.get (index).getReserveringVanaf () == nieuweReservering.getReserveringVanaf ()) {
-                totaalAantalPersonen = totaalAantalPersonen + reserveringen.get (index).getAantalPersonen ();
+            if (reserveringen.get (index).getReserveringsDatum ().equals (nieuweReservering.getReserveringsDatum ())) {
+                if (reserveringen.get (index).getReserveringVanaf () == nieuweReservering.getReserveringVanaf ()) {
+                    totaalAantalPersonen = totaalAantalPersonen + reserveringen.get (index).getAantalPersonen ();
+                }
             }
         }
         System.out.println (totaalAantalPersonen);
@@ -165,7 +197,6 @@ public class TestMaakCafe {
             System.out.println (reserveringen.get (index).toString ());
         }
     }
-
 
     private String vraagOmNieuweReservering() {
         System.out.println ("Wilt u nog een reservering opvoeren (J/N): ");
