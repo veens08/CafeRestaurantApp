@@ -1,22 +1,30 @@
 package org.example.sjoerd.CafeRestaurantApp;
 
-import org.example.sjoerd.CafeRestaurant.app.domain.HorecaGelegenheid;
-import org.example.sjoerd.CafeRestaurant.app.domain.Persoon;
-import org.example.sjoerd.CafeRestaurant.app.domain.Reservering;
-import org.example.sjoerd.CafeRestaurant.app.domain.Tafel;
+import org.example.sjoerd.CafeRestaurant.app.domain.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.LOCAL_DATE;
 
 public class TestMaakCafe {
 
-        private static final int AANTAL_TAFELS_HG = 5;
-        private static final int AANTAL_TOEGESTANE_GASTEN = 15;
-        private static final String NOG_EEN_RESERVERING = "J";
+    private static final int AANTAL_TAFELS_HG = 5;
+    private static final int AANTAL_TOEGESTANE_GASTEN = 15;
+    private static final String NOG_EEN_RESERVERING = "J";
+
+    private static Pattern DATUM_FORMAAT = Pattern.compile(
+            "^\\d{2}-\\d{2}-\\d{4}$");
+
+    private static Pattern DATUM_GELDIGHEID = Pattern.compile(
+            "^(29-02-(2000|2400|2800|(19|2[0-9](0[48]|[2468][048]|[13579][26]))))$"
+                    + "|^(((0[1-9]|1[0-9]|2[0-8])-02-(19|2[0-9])[0-9]{2}))$"
+                    + "|^(((0[1-9]|[12][0-9]|3[01])-(0[13578]|10|12)-(19|2[0-9])[0-9]{2}))$"
+                    + "|^(((0[1-9]|[12][0-9]|30)-(0[469]|11)-(19|2[0-9])[0-9]{2}))$");
 
     @Test
     void testReserveringenInEenCafe () {
@@ -100,11 +108,10 @@ public class TestMaakCafe {
     }
     private Reservering maakReserveringOpConsoleAan() {
 
-        System.out.println ("Geef de reserveringsdatum (dd-mm-eejj) door : ");
-        String reserveringsDatum = vraagStringInvoer ();
+        String reserveringsDatum = datumInvoerTest ();
+
         String tekstVeld = "de begintijd (uumm)";
         int tijdVanaf = numeriekeInvoerTest (tekstVeld);
-        int tijdTot = 0;
 
         System.out.println ("Geef de reserveringsnaam door : ");
         String reserveringsNaam = vraagStringInvoer ();
@@ -116,34 +123,56 @@ public class TestMaakCafe {
         Reservering nieuweReservering = new Reservering
                                         (reserveringsDatum,
                                         tijdVanaf,
-                                        tijdTot,
+                                        0,
                                         reserveringsNaam,
                                         aantalPersonen);
         return nieuweReservering;
     }
 
+    private String datumInvoerTest() {
+
+        boolean datumOnjuist = false;
+        String invoerDatum = null;
+
+        while (datumOnjuist == false) {
+            System.out.println ("Geef de reserveringsdatum (dd-mm-eejj) door : ");
+            invoerDatum = vraagStringInvoer ();
+
+            datumOnjuist = DATUM_FORMAAT.matcher (invoerDatum).matches ();
+            if (datumOnjuist == false) {
+                System.out.println ("Onjuist datum formaat ingevoerd!!!");
+            } else {
+                datumOnjuist = DATUM_GELDIGHEID.matcher (invoerDatum).matches ();
+                if (datumOnjuist == false) {
+                    System.out.println ("Geen geldige datum ingevoerd!!!");
+                }
+            }
+        }
+        return invoerDatum;
+    }
+
     private int numeriekeInvoerTest(String tekstVeld) {
 
-        boolean foutInInvoer = false;
+        boolean fouteNumeriekeInvoer = false;
 
         int numeriekeWaarde = 0;
-        while (foutInInvoer == false) {
+        while (fouteNumeriekeInvoer == false) {
             System.out.println ("Geef " + tekstVeld + " door: ");
             String numeriekeTekst = vraagStringInvoer ();
-            foutInInvoer = true;
+            fouteNumeriekeInvoer = true;
             try {
                 numeriekeWaarde = Integer.parseInt (numeriekeTekst);
             } catch (NumberFormatException nfe) {
                 System.out.println ("Geen numerieke invoer!!");
-                foutInInvoer = false;
+                fouteNumeriekeInvoer = false;
             }
-            foutInInvoer = foutieveWaarde (tekstVeld, foutInInvoer, numeriekeWaarde);
+            fouteNumeriekeInvoer = foutieveWaarde (tekstVeld, fouteNumeriekeInvoer, numeriekeWaarde);
         }
         return numeriekeWaarde;
     }
 
-    private boolean foutieveWaarde(String tekstVeld, boolean foutInInvoer, int numeriekeWaarde) {
-        if (foutInInvoer == true && tekstVeld.equals ("de begintijd (uumm)")) {
+    private boolean foutieveWaarde(String tekstVeld, boolean fouteNumeriekeWaarde, int numeriekeWaarde) {
+        if (fouteNumeriekeWaarde == true && tekstVeld.equals ("de begintijd (uumm)")) {
             if (numeriekeWaarde != 1200 &&
                 numeriekeWaarde != 1300 &&
                 numeriekeWaarde != 1400 &&
@@ -152,10 +181,10 @@ public class TestMaakCafe {
                 numeriekeWaarde != 1700 &&
                 numeriekeWaarde != 1900) {
                 System.out.println ("Foutief tijdstip ingevoerd, alleen 1200, 1300, 1400, 1500, 1600, 1700 of 1900 toegestaan!!");
-                foutInInvoer = false;
+                fouteNumeriekeWaarde = false;
             }
         }
-        return foutInInvoer;
+        return fouteNumeriekeWaarde;
     }
 
     private String vraagStringInvoer() {

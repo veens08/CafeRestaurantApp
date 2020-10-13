@@ -1,5 +1,8 @@
 package org.example.sjoerd.CafeRestaurant.app.domain;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 public class Reservering {
     private String reserveringsDatum;
     private int reserveringVanaf;
