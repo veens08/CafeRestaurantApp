@@ -9,13 +9,14 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.LOCAL_DATE;
 
 public class TestMaakCafe {
 
     private static final int AANTAL_TAFELS_HG = 5;
     private static final int AANTAL_TOEGESTANE_GASTEN = 15;
-    private static final String NOG_EEN_RESERVERING = "J";
+    private static final String NOG_EEN_AANVRAAG = "J";
+    private static final String RESERVERING = "R";
+    private static final String ANNULERING = "A";
 
     private static Pattern DATUM_FORMAAT = Pattern.compile(
             "^\\d{2}-\\d{2}-\\d{4}$");
@@ -27,7 +28,7 @@ public class TestMaakCafe {
                     + "|^(((0[1-9]|[12][0-9]|30)-(0[469]|11)-(19|2[0-9])[0-9]{2}))$");
 
     @Test
-    void testReserveringenInEenCafe () {
+    void testEenAanvraagInEenCafe () {
 
         HorecaGelegenheid cafe = maakHorecaGelegenheid ();
 
@@ -35,20 +36,46 @@ public class TestMaakCafe {
 
         List<Reservering> reserveringen = (List<Reservering>) maakTestReserveringenAan ();
 
-        neemEenReserveringAan (reserveringen);
+        behandelEenAanvraag (reserveringen);
     }
 
-    private void neemEenReserveringAan(List<Reservering> reserveringen) {
-        String volgendeReservering = NOG_EEN_RESERVERING;
-        while (volgendeReservering.equals (NOG_EEN_RESERVERING)) {
-            Reservering nieuweReservering = maakReserveringOpConsoleAan ();
+    private void behandelEenAanvraag(List<Reservering> reserveringen) {
+        String volgendeAanvraag = NOG_EEN_AANVRAAG;
+        while (volgendeAanvraag.equals (NOG_EEN_AANVRAAG)) {
+            String typeAanvraag = verwerkAanvraag ();
 
-            boolean reserveringIsToegestaan = testTotaalAantalPersonenVanReserveringen (reserveringen, nieuweReservering);
-
-            verwerkNieuweReservering (reserveringen, reserveringIsToegestaan);
-
-            volgendeReservering = vraagOmNieuweReservering ();
+            if (typeAanvraag.equals (ANNULERING)) {
+                System.out.println ("Kan nog geen annulering invoeren!");
+                volgendeAanvraag = verwerkAnnulering (reserveringen);
+            } else {
+                volgendeAanvraag = maakReservering (reserveringen);
+            }
         }
+    }
+
+    private String verwerkAnnulering(List<Reservering> reserveringen) {
+        String volgendeAanvraag;
+        verwerkAnnuleringOpConsole (reserveringen) ;
+
+        volgendeAanvraag = vraagOmNogEenAanvraag ();
+        return volgendeAanvraag;
+    }
+
+    private String maakReservering(List<Reservering> reserveringen) {
+        String volgendeAanvraag;
+        Reservering nieuweReservering = maakReserveringOpConsoleAan ();
+
+        verwerkReserveringen (reserveringen, nieuweReservering);
+
+        int aantalReserveringen = reserveringen.size ();
+        System.out.println ("Aantal reserveringen: " + aantalReserveringen);
+
+        for (int index = 0; index < aantalReserveringen; index++) {
+            System.out.println (reserveringen.get (index).toString ());
+        }
+
+        volgendeAanvraag = vraagOmNogEenAanvraag ();
+        return volgendeAanvraag;
     }
 
     private HorecaGelegenheid maakHorecaGelegenheid() {
@@ -87,13 +114,13 @@ public class TestMaakCafe {
     }
 
     private List<Reservering> maakTestReserveringenAan() {
-        Reservering tafel1 = new Reservering ("11-10-2020", 1600, 1900, "Cas", 4);
-        Reservering tafel2 = new Reservering ("11-10-2020", 1600, 1900, "Jos", 4);
-        Reservering tafel3 = new Reservering ("11-10-2020", 1700, 1900, "Dre", 4);
-        Reservering tafel4 = new Reservering ("11-10-2020", 1700, 1900, "Cees", 4);
-        Reservering tafel5 = new Reservering ("11-10-2020", 1700, 1900, "Dolf", 4);
-        Reservering tafel6 = new Reservering ("11-10-2020", 1900, 1900, "Jan", 4);
-        Reservering tafel7 = new Reservering ("11-10-2020", 1900, 1900, "Cas", 4);
+        Reservering tafel1 = new Reservering ("24-10-2020", 1600, 0, "Cas", 4);
+        Reservering tafel2 = new Reservering ("24-10-2020", 1600, 0, "Jos", 4);
+        Reservering tafel3 = new Reservering ("24-10-2020", 1700, 0, "Dre", 4);
+        Reservering tafel4 = new Reservering ("24-10-2020", 1700, 0, "Cees", 4);
+        Reservering tafel5 = new Reservering ("24-10-2020", 1700, 0, "Dolf", 4);
+        Reservering tafel6 = new Reservering ("24-10-2020", 1900, 0, "Jan", 4);
+        Reservering tafel7 = new Reservering ("24-10-2020", 1900, 0, "Cas", 4);
         List<Reservering> reserveringen = new ArrayList<Reservering> ();
 
         reserveringen.add(tafel1);
@@ -106,6 +133,64 @@ public class TestMaakCafe {
 
         return reserveringen;
     }
+
+    private String verwerkAanvraag() {
+        boolean typeAanvraagOnjuist = false;
+        String typeAanvraag = null;
+
+        while (typeAanvraagOnjuist == false) {
+            System.out.println ("Geef type aanvraag door, annulering of reservering (A/R): ");
+            typeAanvraag = vraagStringInvoer ();
+
+            if (typeAanvraag.equals (ANNULERING) || typeAanvraag.equals (RESERVERING)) {
+                typeAanvraagOnjuist = true;
+            }
+            else {
+                System.out.println ("Geen geldige waarde ingevoerd!!!");
+            }
+        }
+        return typeAanvraag;
+    }
+
+    private void verwerkAnnuleringOpConsole(List<Reservering> reserveringen) {
+
+        String annuleringsDatum = datumInvoerTest ();
+
+        String tekstVeld = "de begintijd (uumm)";
+        int tijdAnnuleringVanaf = numeriekeInvoerTest (tekstVeld);
+
+        System.out.println ("Geef de reserveringsnaam door : ");
+        String reserveringsNaam = vraagStringInvoer ();
+
+        System.out.println ("Datum: " + annuleringsDatum + " Tijd: " + tijdAnnuleringVanaf + " Naam: " + reserveringsNaam);
+
+        zoekEnVerwijderReservering (reserveringen, annuleringsDatum, tijdAnnuleringVanaf, reserveringsNaam);
+
+        int aantalReserveringen = reserveringen.size ();
+        for (int index = 0; index < aantalReserveringen; index++) {
+            System.out.println (reserveringen.get (index).toString ());
+        }
+    }
+
+    private void zoekEnVerwijderReservering(List<Reservering> reserveringen, String annuleringsDatum, int tijdAnnuleringVanaf, String reserveringsNaam) {
+        int aantalReserveringen = reserveringen.size ();
+        int index = 0;
+        boolean reserveringGevonden = false;
+
+        while (index < aantalReserveringen && !reserveringGevonden) {
+            if ((reserveringen.get (index).getReserveringsDatum ().equals (annuleringsDatum)) &&
+                (reserveringen.get (index).getReserveringVanaf () == tijdAnnuleringVanaf) &&
+                (reserveringen.get (index).getNaamReservering ().equals (reserveringsNaam))) {
+                    reserveringGevonden = true;
+                    reserveringen.remove (index);
+                System.out.println ("Annulering verwerkt");
+            } else {
+                    System.out.println ("Reservering niet gevonden");
+            }
+            index++;
+         }
+    }
+
     private Reservering maakReserveringOpConsoleAan() {
 
         String reserveringsDatum = datumInvoerTest ();
@@ -127,6 +212,26 @@ public class TestMaakCafe {
                                         reserveringsNaam,
                                         aantalPersonen);
         return nieuweReservering;
+    }
+
+    private void verwerkReserveringen(List<Reservering> reserveringen, Reservering nieuweReservering) {
+
+        int totaalAantalPersonen = nieuweReservering.getAantalPersonen ();
+        int aantalReserveringen = reserveringen.size ();
+        for (int index = 0; index < aantalReserveringen; index++) {
+            if (reserveringen.get (index).getReserveringsDatum ().equals (nieuweReservering.getReserveringsDatum ())) {
+                if (reserveringen.get (index).getReserveringVanaf () == nieuweReservering.getReserveringVanaf ()) {
+                    totaalAantalPersonen = totaalAantalPersonen + reserveringen.get (index).getAantalPersonen ();
+                }
+            }
+        }
+        System.out.println (totaalAantalPersonen);
+        if (totaalAantalPersonen > AANTAL_TOEGESTANE_GASTEN) {
+            System.out.println ("Reservering afgewezen, te veel gasten");
+        } else {
+            reserveringen.add(nieuweReservering);
+            System.out.println ("Reservering is gemaakt");
+        }
     }
 
     private String datumInvoerTest() {
@@ -193,9 +298,8 @@ public class TestMaakCafe {
         return invoerString;
     }
 
-    private boolean testTotaalAantalPersonenVanReserveringen(List<Reservering> reserveringen, Reservering nieuweReservering) {
+    private void verwerkReserveringen(List<Reservering> reserveringen, Reservering nieuweReservering) {
 
-        boolean reserveringToegestaan = true;
         int totaalAantalPersonen = nieuweReservering.getAantalPersonen ();
         int aantalReserveringen = reserveringen.size ();
         for (int index = 0; index < aantalReserveringen; index++) {
@@ -207,29 +311,15 @@ public class TestMaakCafe {
         }
         System.out.println (totaalAantalPersonen);
         if (totaalAantalPersonen > AANTAL_TOEGESTANE_GASTEN) {
-            reserveringToegestaan = false;
+            System.out.println ("Reservering afgewezen, te veel gasten");
         } else {
             reserveringen.add(nieuweReservering);
-        }
-        return reserveringToegestaan;
-    }
-
-    private void verwerkNieuweReservering(List<Reservering> reserveringen, boolean reserveringIsToegestaan) {
-        int aantalReserveringen = reserveringen.size ();
-        if (reserveringIsToegestaan) {
             System.out.println ("Reservering is gemaakt");
-        } else {
-            System.out.println ("Reservering afgewezen, te veel gasten");
-        }
-        System.out.println ("Aantal reserveringen: " + aantalReserveringen);
-
-        for (int index = 0; index < aantalReserveringen; index++) {
-            System.out.println (reserveringen.get (index).toString ());
         }
     }
 
-    private String vraagOmNieuweReservering() {
-        System.out.println ("Wilt u nog een reservering opvoeren (J/N): ");
+    private String vraagOmNogEenAanvraag() {
+        System.out.println ("Wilt u nog een annulering of reservering opvoeren (J/N): ");
         String nieuweReservering = vraagStringInvoer ();
         return nieuweReservering;
     }
